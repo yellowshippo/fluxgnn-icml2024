@@ -1,0 +1,49 @@
+task:
+  dataset: convection_diffusion
+  validate_physics: false
+  predict_and_write: true
+
+experiment:
+  write_initial: true
+  # scale_answer: true
+  # power_scale_answer: .5
+
+data:
+  dataset_file_prefix: cd
+  output_directory_base: results/convection_diffusion/fv
+  train: []
+  validation: []
+  test:
+    - data/convection_diffusion/raw/test/0
+    - data/convection_diffusion/raw/test/1
+    - data/convection_diffusion/raw/test/2
+    - data/convection_diffusion/raw/test/3
+    - data/convection_diffusion/raw/test/4
+    - data/convection_diffusion/raw/test/5
+    - data/convection_diffusion/raw/test/6
+    - data/convection_diffusion/raw/test/7
+    - data/convection_diffusion/raw/test/8
+    - data/convection_diffusion/raw/test/9
+
+simulation:
+  t_max: 1.
+  delta_t: .1
+  original_delta_t: .1
+  eval_t_max: 1.
+  test_t_max: 1.
+
+ml: {}
+
+model:
+  mode: convection_diffusion
+
+solver:
+  print_period: 0
+  write_mesh_period: 1
+  store_results_period: 0
+  upwind: true
+  time_evolution_method: explicit
+  n_time_repeat: 1
+  debug: false
+  convergence_threshold: 1.e-5
+  clone_boundary: true

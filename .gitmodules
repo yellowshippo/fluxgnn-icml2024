@@ -1,0 +1,8 @@
+[submodule "MP-Neural-PDE-Solvers"]
+	path = MP-Neural-PDE-Solvers
+	url = git@github.com:yellowshippo/MP-Neural-PDE-Solvers.git
+	branch = for_fluxgnn
+[submodule "lib/siml"]
+	path = lib/siml
+	url = git@github.com:ricosjp/siml.git
+	branch = add_dggnn

@@ -1,0 +1,915 @@
+misc:
+  n_mid_feature: &n_mid_feature 8
+  n_feature: &n_feature 16
+  repeat: &repeat 16
+  repeat_p: &repeat_p 5
+
+  time_series_length: &time_series_length 8
+  eval_time_series_length: &eval_time_series_length 8
+  time_stride: &time_stride 2
+
+data:
+  train:
+    - data/mixture/preprocessed/train/h0.20_w0.20_rho990_0
+    - data/mixture/preprocessed/train/h0.20_w0.20_rho990_1
+    - data/mixture/preprocessed/train/h0.20_w0.20_rho990_2
+    - data/mixture/preprocessed/train/h0.20_w0.20_rho990_3
+    - data/mixture/preprocessed/train/h0.20_w0.60_rho990_0
+    - data/mixture/preprocessed/train/h0.20_w0.60_rho990_1
+    - data/mixture/preprocessed/train/h0.20_w0.60_rho990_2
+    - data/mixture/preprocessed/train/h0.20_w0.60_rho990_3
+    - data/mixture/preprocessed/train/h0.40_w0.20_rho990_0
+    - data/mixture/preprocessed/train/h0.40_w0.20_rho990_1
+    - data/mixture/preprocessed/train/h0.40_w0.20_rho990_2
+    - data/mixture/preprocessed/train/h0.40_w0.20_rho990_3
+    - data/mixture/preprocessed/train/h0.60_w0.40_rho990_0
+    - data/mixture/preprocessed/train/h0.60_w0.40_rho990_1
+    - data/mixture/preprocessed/train/h0.60_w0.40_rho990_2
+    - data/mixture/preprocessed/train/h0.60_w0.40_rho990_3
+    - data/mixture/preprocessed/train/h0.60_w0.60_rho990_0
+    - data/mixture/preprocessed/train/h0.60_w0.60_rho990_1
+    - data/mixture/preprocessed/train/h0.60_w0.60_rho990_2
+    - data/mixture/preprocessed/train/h0.60_w0.60_rho990_3
+
+  validation:
+    - data/mixture/preprocessed/validation/h0.40_w0.40_rho990_0
+    - data/mixture/preprocessed/validation/h0.40_w0.40_rho990_1
+    - data/mixture/preprocessed/validation/h0.40_w0.40_rho990_2
+    - data/mixture/preprocessed/validation/h0.40_w0.40_rho990_3
+    - data/mixture/preprocessed/validation/h0.60_w0.20_rho990_0
+    - data/mixture/preprocessed/validation/h0.60_w0.20_rho990_1
+    - data/mixture/preprocessed/validation/h0.60_w0.20_rho990_2
+    - data/mixture/preprocessed/validation/h0.60_w0.20_rho990_3
+
+  test:
+    - data/mixture/preprocessed/test/h0.20_w0.40_rho990_0
+    - data/mixture/preprocessed/test/h0.20_w0.40_rho990_1
+    - data/mixture/preprocessed/test/h0.20_w0.40_rho990_2
+    - data/mixture/preprocessed/test/h0.20_w0.40_rho990_3
+    - data/mixture/preprocessed/test/h0.40_w0.60_rho990_0
+    - data/mixture/preprocessed/test/h0.40_w0.60_rho990_1
+    - data/mixture/preprocessed/test/h0.40_w0.60_rho990_2
+    - data/mixture/preprocessed/test/h0.40_w0.60_rho990_3
+
+inferer:
+  output_directory_base: data/mixture/penn/predictions
+trainer:
+  output_directory_base: data/mixture/penn/models
+
+  time_series_split:
+    - 0
+    - *time_series_length
+    - *time_series_length
+  time_series_split_evaluation:
+    - 0
+    - 1000000
+    - *eval_time_series_length
+
+  recursive: true
+  output_stats: false
+  inputs:
+    u:
+      - name: nodal_u
+        time_series: true
+        time_slice:
+          - 0
+          - null
+          - *time_stride
+    p:
+      - name: nodal_p
+        time_series: true
+        time_slice:
+          - 0
+          - null
+          - *time_stride
+    alpha:
+      - name: nodal_alpha
+        time_series: true
+        time_slice:
+          - 0
+          - null
+          - *time_stride
+
+    dirichlet_u:
+      - name: nodal_dirichlet_u
+        dim: 1
+    dirichlet_p:
+      - name: nodal_dirichlet_p
+        dim: 1
+
+    gh:
+      - name: nodal_gh
+
+    rank1:
+      - name: nodal_gravity
+      - name: normal
+
+  support_inputs:
+    - nodal_x_grad_hop1
+    - nodal_y_grad_hop1
+    - nodal_z_grad_hop1
+    - nodal_nadj
+
+  outputs:
+    u:
+      - name: nodal_u
+        dim: 1
+        time_series: true
+        time_slice:
+          - *time_stride
+          - null
+          - *time_stride
+    p:
+      - name: nodal_p
+        dim: 1
+        time_series: true
+        time_slice:
+          - *time_stride
+          - null
+          - *time_stride
+    alpha:
+      - name: nodal_alpha
+        dim: 1
+        time_series: true
+        time_slice:
+          - *time_stride
+          - null
+          - *time_stride
+
+  prune: false
+  batch_size: 1
+  n_epoch: 10000
+  log_trigger_epoch: 1
+  stop_trigger_epoch: 10
+  seed: 0
+  lazy: false
+  num_workers: 0
+  optimizer_setting:
+    lr: 5.e-4
+
+model:
+  blocks:
+    - name: IN_U
+      type: accessor
+      is_first: true
+      input_keys:
+        - u
+      destinations:
+        - MLP_U
+    - name: MLP_U
+      type: mlp
+      destinations:
+        - GROUP1
+      output_key: gu
+      bias: false
+      nodes:
+        - -1
+        - *n_feature
+      activations:
+        - identity
+
+    - name: IN_P
+      type: accessor
+      is_first: true
+      input_keys:
+        - p
+      destinations: MLP_P
+    - name: MLP_P
+      type: mlp
+      destinations:
+        - GROUP1
+      output_key: gp
+      bias: false
+      nodes:
+        - -1
+        - *n_mid_feature
+        - *n_feature
+      activations:
+        - leaky_relu
+        - identity
+
+    - name: IN_ALPHA
+      type: accessor
+      is_first: true
+      input_keys:
+        - alpha
+      destinations:
+        - MLP_ALPHA
+    - name: MLP_ALPHA
+      type: mlp
+      destinations:
+        - GROUP1
+      output_key: galpha
+      bias: false
+      nodes:
+        - -1
+        - *n_mid_feature
+        - *n_feature
+      activations:
+        - leaky_relu
+        - identity
+
+    - name: IN_GH
+      type: mlp
+      bias: false
+      destinations:
+        - GROUP1
+      is_first: true
+      input_keys:
+        - gh
+      output_key: ggh
+      nodes:
+        - -1
+        - *n_feature
+      activations:
+        - identity
+
+    - name: IN_DIRICHLET_U
+      type: share
+      is_first: true
+      no_grad: true
+      input_keys:
+        - dirichlet_u
+      destinations:
+        - ID_DIRICHLET_U
+        - OUT_DIRICHLET_U
+      reference_block_name: MLP_U
+    - name: ID_DIRICHLET_U
+      type: identity
+      destinations:
+        - GROUP1
+      output_key: gdirichlet_u
+
+    - name: IN_DIRICHLET_P
+      type: share
+      is_first: true
+      no_grad: true
+      input_keys:
+        - dirichlet_p
+      destinations:
+        - ID_DIRICHLET_P
+        - OUT_DIRICHLET_P
+      reference_block_name: MLP_P
+    - name: ID_DIRICHLET_P
+      type: identity
+      destinations:
+        - GROUP1
+      output_key: gdirichlet_p
+
+    - name: IN_RANK1
+      type: equivariant_mlp
+      is_first: true
+      input_keys:
+        - rank1
+      destinations:
+        - GROUP1
+      output_key: grank1
+      nodes:
+        - -1
+        - *n_mid_feature
+        - *n_feature
+      activations:
+        - tanh
+        - tanh
+
+    - name: GROUP1
+      type: group
+      destinations:
+        - ID_U
+        - ID_P
+        - ID_ALPHA
+    - name: ID_U
+      type: identity
+      input_keys:
+        - gu
+      destinations:
+        - OUT_DIRICHLET_U
+    - name: ID_P
+      type: identity
+      input_keys:
+        - gp
+      destinations:
+        - OUT_DIRICHLET_P
+    - name: ID_ALPHA
+      type: identity
+      input_keys:
+        - galpha
+      destinations:
+        - DECODER_ALPHA
+
+    - name: OUT_DIRICHLET_U
+      type: dirichlet
+      input_names:
+        - ID_U
+        - IN_DIRICHLET_U
+      destinations:
+        - DECODER_U
+    - name: OUT_DIRICHLET_P
+      type: dirichlet
+      input_names:
+        - ID_P
+        - IN_DIRICHLET_P
+      destinations:
+        - DECODER_P
+
+    - name: DECODER_U
+      type: pinv_mlp
+      is_last: true
+      output_key: u
+      # destinations:
+      #   - TS2F
+      reference_block_name: MLP_U
+    # - name: TS2F
+    #   type: time_series_to_features
+    #   is_last: true
+    #   output_key: u
+
+    - name: DECODER_P
+      type: pinv_mlp
+      is_last: true
+      output_key: p
+      # destinations:
+      #   - TS2F_P
+      reference_block_name: MLP_P
+    # - name: TS2F_P
+    #   type: time_series_to_features
+    #   is_last: true
+    #   output_key: p
+
+    - name: DECODER_ALPHA
+      type: pinv_mlp
+      is_last: true
+      output_key: alpha
+      reference_block_name: MLP_ALPHA
+
+  groups:
+    - name: GROUP1
+      debug: false
+      time_series_length: *time_series_length
+      repeat: *repeat
+      mode: implicit
+      convergence_threshold: 1.0e-5
+      optional:
+        componentwise_alpha: false
+        divergent_threshold: 1000000000
+      inputs:
+        gu:
+          - name: MLP_U
+            dim: *n_feature
+            skip: false
+        gp:
+          - name: MLP_P
+            dim: *n_feature
+            skip: false
+        galpha:
+          - name: MLP_ALPHA
+            dim: *n_feature
+            skip: false
+
+        gdirichlet_u:
+          - name: ID_DIRICHLET_U
+            dim: *n_feature
+            skip: true
+        gdirichlet_p:
+          - name: ID_DIRICHLET_P
+            dim: *n_feature
+            skip: true
+        ggh:
+          - name: IN_GH
+            dim: *n_feature
+            skip: true
+        grank1:
+          - name: IN_RANK1
+            dim: *n_feature
+            skip: true
+
+      support_inputs:
+        - nodal_x_grad_hop1
+        - nodal_y_grad_hop1
+        - nodal_z_grad_hop1
+        - nodal_nadj
+
+      outputs:
+        gu:
+          - name: OUT_ADD
+            dim: *n_feature
+        gp:
+          - name: OUT_P
+            dim: *n_feature
+        galpha:
+          - name: OUT_ALPHA
+            dim: *n_feature
+
+      blocks:
+        - name: ID_U
+          type: identity
+          is_first: true
+          input_keys:
+            - gu
+            - grank1
+          destinations:
+            - U_MLP
+        - name: U_MLP
+          type: equivariant_mlp
+          destinations:
+            - DIRICHLET_U
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+        - name: IN_DIRICHLET_U
+          type: identity
+          is_first: true
+          input_keys:
+            - gdirichlet_u
+          destinations:
+            - DIRICHLET_U
+
+        - name: DIRICHLET_U
+          type: dirichlet
+          input_names:
+            - U_MLP
+            - IN_DIRICHLET_U
+          destinations:
+            - MUL_U_ALPHA
+            - ISOGCN_LAPLACIAN
+            - ADVECTION_CONTRACTION
+            - ADD_INTERMEDIATE
+
+        # Solve alpha convection--diffusion
+        - name: ID_ALPHA
+          type: identity
+          is_first: true
+          input_keys:
+            - galpha
+          destinations:
+            - ALPHA_MLP
+        - name: ALPHA_MLP
+          type: mlp
+          destinations:
+            - MUL_U_ALPHA
+            - ISOGCN_GRAD_ALPHA
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+        - name: MUL_U_ALPHA
+          type: reducer
+          destinations:
+            - ISOGCN_DIV_U_ALPHA
+            - ISOGCN_JACOBIAN
+          optional:
+            operator: mul
+
+        - name: ISOGCN_GRAD_ALPHA
+          type: iso_gcn
+          destinations:
+            - MUL_GH_GRAD_ALPHA
+            - ISOGCN_DIV_GRAD_ALPHA
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - convolution
+            ah_w: true
+        - name: ISOGCN_DIV_GRAD_ALPHA
+          type: iso_gcn
+          destinations:
+            - ADD_ALPHA
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - contraction
+            ah_w: true
+        - name: ISOGCN_DIV_U_ALPHA
+          type: iso_gcn
+          destinations:
+            - ADD_ALPHA
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - contraction
+            ah_w: true
+        - name: ADD_ALPHA
+          type: reducer
+          destinations:
+            - OUT_ALPHA
+          optional:
+            operator: add
+        - name: OUT_ALPHA
+          type: gcn
+          is_last: true
+          output_key: galpha
+          bias: false
+          coeff: 1.0
+          support_input_indices:
+            - 3
+          residual: false
+          nodes:
+            - -1
+            - *n_feature
+          activations:
+            - tanh
+          optional:
+            factor: 1.0
+            repeat: 1
+            ah_w: true
+
+        # Density source for pressure Poisson eq.
+        - name: IN_GH
+          type: identity
+          is_first: true
+          input_keys:
+            - ggh
+          destinations:
+            - MUL_GH_GRAD_ALPHA
+
+        # Buoyancy term
+        - name: MUL_GH_GRAD_ALPHA
+          type: reducer
+          destinations:
+            - ISOGCN_DIV_GH_GRAD_ALPHA
+            - ADD
+          optional:
+            operator: add
+
+        - name: ISOGCN_DIV_GH_GRAD_ALPHA
+          type: iso_gcn
+          destinations:
+            - ADD_SOURCE
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - contraction
+            ah_w: true
+
+
+        # Diffusion term
+        - name: ISOGCN_LAPLACIAN
+          type: iso_gcn
+          destinations:
+            - ADD_FRACTION
+            - ADD
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - tensor_product
+              - contraction
+            ah_w: true
+
+        # Convection term
+        - name: ISOGCN_JACOBIAN
+          type: iso_gcn
+          destinations:
+            - ADVECTION_CONTRACTION
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - tensor_product
+            ah_w: true
+
+        # Fractional step intermediate velocity
+        - name: ADVECTION_CONTRACTION
+          type: contraction
+          destinations:
+            - ADD
+            - ADD_FRACTION
+        - name: ADD_FRACTION
+          type: reducer
+          destinations:
+            - FRACTION_MLP
+          optional:
+            operator: add
+        - name: FRACTION_MLP
+          type: equivariant_mlp
+          destinations:
+            - ADD_INTERMEDIATE
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+        - name: ADD_INTERMEDIATE
+          type: reducer
+          destinations:
+            - ISOGCN_SOURCE_POISSON
+          optional:
+            operator: add
+
+        # Pressure Poisson equation
+        - name: IN_P
+          type: identity
+          is_first: true
+          input_keys:
+            - gp
+          destinations:
+            - P_MLP
+        - name: P_MLP
+          type: mlp
+          destinations:
+            - GROUP_POISSON
+          output_key: gp
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+        - name: ID_DIRICHLET_P
+          type: identity
+          is_first: true
+          input_keys:
+            - gdirichlet_p
+          destinations:
+            - DIRICHLET_P
+            - ID_KEY_DIRICHLET_P
+        - name: ID_KEY_DIRICHLET_P
+          type: identity
+          output_key: gdirichlet_p
+          destinations:
+            - GROUP_POISSON
+
+        - name: ISOGCN_SOURCE_POISSON
+          type: iso_gcn
+          destinations:
+            - ADD_SOURCE
+          residual: false
+          bias: true
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - contraction
+            ah_w: true
+        - name: ADD_SOURCE
+          type: reducer
+          destinations:
+            - GCN_SOURCE_POISSON
+          optional:
+            operator: add
+        - name: GCN_SOURCE_POISSON
+          type: gcn
+          destinations:
+            - GROUP_POISSON
+          output_key: gsource
+          support_input_indices:
+            - 3
+          residual: false
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            factor: 1.0
+            ah_w: true
+            repeat: 1
+        - name: GROUP_POISSON
+          type: group
+          destinations:
+            - ID_OUT_P
+        - name: ID_OUT_P
+          type: identity
+          input_keys:
+            - gp
+          destinations:
+            - DIRICHLET_P
+        - name: DIRICHLET_P
+          type: dirichlet
+          input_names:
+            - ID_OUT_P
+            - ID_DIRICHLET_P
+          destinations:
+            - ISOGCN_GRAD_P
+            - OUT_P
+
+        # Pressure gradient term
+        - name: ISOGCN_GRAD_P
+          type: iso_gcn
+          destinations:
+            - ADD
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - convolution
+            ah_w: true
+
+        - name: ADD
+          type: reducer
+          destinations:
+            - GCN
+          optional:
+            operator: add
+
+        # Smoothing
+        - name: GCN
+          type: gcn
+          is_last: true
+          output_key: gu
+          bias: false
+          coeff: 1.0
+          support_input_indices:
+            - 3
+          residual: false
+          nodes:
+            - -1
+            - *n_feature
+          activations:
+            - identity
+          optional:
+            factor: 1.0
+            repeat: 1
+            ah_w: true
+
+        # Output
+        - name: OUT_P
+          type: identity
+          is_last: true
+          output_key: gp
+
+    - name: GROUP_POISSON
+      debug: false
+      repeat: *repeat_p
+      mode: implicit
+      convergence_threshold: 1.0e-5
+      inputs:
+        gp:
+          - name: P_MLP
+            dim: *n_feature
+            skip: false
+        gdirichlet_p:
+          - name: ID_KEY_DIRICHLET_P
+            dim: *n_feature
+            skip: true
+        gsource:
+          - name: GCN_SOURCE_POISSON
+            dim: *n_feature
+            skip: true
+      support_inputs:
+        - nodal_x_grad_hop1
+        - nodal_y_grad_hop1
+        - nodal_z_grad_hop1
+        - nodal_nadj
+      outputs:
+        gp:
+          - name: OUT_P
+            dim: *n_feature
+      blocks:
+        - name: IN_P
+          type: identity
+          is_first: true
+          input_keys:
+            - gp
+          destinations:
+            - DIRICHLET
+        - name: IN_DIRICHLET
+          type: identity
+          is_first: true
+          input_keys:
+            - gdirichlet_p
+          destinations:
+            - DIRICHLET
+        - name: DIRICHLET
+          type: dirichlet
+          input_names:
+            - IN_P
+            - IN_DIRICHLET
+          destinations:
+            - ISOGCN_LAPLACIAN_P
+        - name: IN_SOURCE
+          type: identity
+          is_first: true
+          input_keys:
+            - gsource
+          destinations:
+            - ADD
+        - name: ISOGCN_LAPLACIAN_P
+          type: iso_gcn
+          destinations:
+            - ADD
+          residual: false
+          bias: false
+          support_input_indices:
+            - 0
+            - 1
+            - 2
+          nodes:
+            - -1
+            - *n_feature
+            - *n_feature
+          activations:
+            - tanh
+            - tanh
+          optional:
+            propagations:
+              - convolution
+              - contraction
+            ah_w: true
+        - name: ADD
+          type: reducer
+          coeff: 1.0
+          optional:
+            operator: add

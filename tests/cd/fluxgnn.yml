@@ -1,0 +1,206 @@
+task:
+  dataset: convection_diffusion
+  validate_physics: false
+  predict_and_write: true
+
+  # Task specific setting
+  data_directory_base: data/convection_diffusion
+  t_max: &original_t_max 1.
+  delta_t: &original_delta_t .1
+  n_train: 100
+  n_validation: 10
+  n_test: 10
+  n_x_element: 10
+
+experiment:
+  write_initial: true
+  # scale_answer: true
+  # power_scale_answer: .5
+
+data:
+  dataset_file_prefix: cd
+  output_directory_base: tests/cd/models
+  train:
+    - data/convection_diffusion/raw/train/0
+    - data/convection_diffusion/raw/train/1
+    - data/convection_diffusion/raw/train/2
+    - data/convection_diffusion/raw/train/3
+    - data/convection_diffusion/raw/train/4
+    - data/convection_diffusion/raw/train/5
+    - data/convection_diffusion/raw/train/6
+    - data/convection_diffusion/raw/train/7
+    - data/convection_diffusion/raw/train/8
+    - data/convection_diffusion/raw/train/9
+    - data/convection_diffusion/raw/train/10
+    - data/convection_diffusion/raw/train/11
+    - data/convection_diffusion/raw/train/12
+    - data/convection_diffusion/raw/train/13
+    - data/convection_diffusion/raw/train/14
+    - data/convection_diffusion/raw/train/15
+    - data/convection_diffusion/raw/train/16
+    - data/convection_diffusion/raw/train/17
+    - data/convection_diffusion/raw/train/18
+    - data/convection_diffusion/raw/train/19
+    - data/convection_diffusion/raw/train/20
+    - data/convection_diffusion/raw/train/21
+    - data/convection_diffusion/raw/train/22
+    - data/convection_diffusion/raw/train/23
+    - data/convection_diffusion/raw/train/24
+    - data/convection_diffusion/raw/train/25
+    - data/convection_diffusion/raw/train/26
+    - data/convection_diffusion/raw/train/27
+    - data/convection_diffusion/raw/train/28
+    - data/convection_diffusion/raw/train/29
+    - data/convection_diffusion/raw/train/30
+    - data/convection_diffusion/raw/train/31
+    - data/convection_diffusion/raw/train/32
+    - data/convection_diffusion/raw/train/33
+    - data/convection_diffusion/raw/train/34
+    - data/convection_diffusion/raw/train/35
+    - data/convection_diffusion/raw/train/36
+    - data/convection_diffusion/raw/train/37
+    - data/convection_diffusion/raw/train/38
+    - data/convection_diffusion/raw/train/39
+    - data/convection_diffusion/raw/train/40
+    - data/convection_diffusion/raw/train/41
+    - data/convection_diffusion/raw/train/42
+    - data/convection_diffusion/raw/train/43
+    - data/convection_diffusion/raw/train/44
+    - data/convection_diffusion/raw/train/45
+    - data/convection_diffusion/raw/train/46
+    - data/convection_diffusion/raw/train/47
+    - data/convection_diffusion/raw/train/48
+    - data/convection_diffusion/raw/train/49
+    - data/convection_diffusion/raw/train/50
+    - data/convection_diffusion/raw/train/51
+    - data/convection_diffusion/raw/train/52
+    - data/convection_diffusion/raw/train/53
+    - data/convection_diffusion/raw/train/54
+    - data/convection_diffusion/raw/train/55
+    - data/convection_diffusion/raw/train/56
+    - data/convection_diffusion/raw/train/57
+    - data/convection_diffusion/raw/train/58
+    - data/convection_diffusion/raw/train/59
+    - data/convection_diffusion/raw/train/60
+    - data/convection_diffusion/raw/train/61
+    - data/convection_diffusion/raw/train/62
+    - data/convection_diffusion/raw/train/63
+    - data/convection_diffusion/raw/train/64
+    - data/convection_diffusion/raw/train/65
+    - data/convection_diffusion/raw/train/66
+    - data/convection_diffusion/raw/train/67
+    - data/convection_diffusion/raw/train/68
+    - data/convection_diffusion/raw/train/69
+    - data/convection_diffusion/raw/train/70
+    - data/convection_diffusion/raw/train/71
+    - data/convection_diffusion/raw/train/72
+    - data/convection_diffusion/raw/train/73
+    - data/convection_diffusion/raw/train/74
+    - data/convection_diffusion/raw/train/75
+    - data/convection_diffusion/raw/train/76
+    - data/convection_diffusion/raw/train/77
+    - data/convection_diffusion/raw/train/78
+    - data/convection_diffusion/raw/train/79
+    - data/convection_diffusion/raw/train/80
+    - data/convection_diffusion/raw/train/81
+    - data/convection_diffusion/raw/train/82
+    - data/convection_diffusion/raw/train/83
+    - data/convection_diffusion/raw/train/84
+    - data/convection_diffusion/raw/train/85
+    - data/convection_diffusion/raw/train/86
+    - data/convection_diffusion/raw/train/87
+    - data/convection_diffusion/raw/train/88
+    - data/convection_diffusion/raw/train/89
+    - data/convection_diffusion/raw/train/90
+    - data/convection_diffusion/raw/train/91
+    - data/convection_diffusion/raw/train/92
+    - data/convection_diffusion/raw/train/93
+    - data/convection_diffusion/raw/train/94
+    - data/convection_diffusion/raw/train/95
+    - data/convection_diffusion/raw/train/96
+    - data/convection_diffusion/raw/train/97
+    - data/convection_diffusion/raw/train/98
+    - data/convection_diffusion/raw/train/99
+  validation:
+    - data/convection_diffusion/raw/validation/0
+    - data/convection_diffusion/raw/validation/1
+    - data/convection_diffusion/raw/validation/2
+    - data/convection_diffusion/raw/validation/3
+    - data/convection_diffusion/raw/validation/4
+    - data/convection_diffusion/raw/validation/5
+    - data/convection_diffusion/raw/validation/6
+    - data/convection_diffusion/raw/validation/7
+    - data/convection_diffusion/raw/validation/8
+    - data/convection_diffusion/raw/validation/9
+  test:
+    - data/convection_diffusion/raw/test/0
+    - data/convection_diffusion/raw/test/1
+    - data/convection_diffusion/raw/test/2
+    - data/convection_diffusion/raw/test/3
+    - data/convection_diffusion/raw/test/4
+    - data/convection_diffusion/raw/test/5
+    - data/convection_diffusion/raw/test/6
+    - data/convection_diffusion/raw/test/7
+    - data/convection_diffusion/raw/test/8
+    - data/convection_diffusion/raw/test/9
+
+simulation:
+  t_max: .4
+  delta_t: .1
+  original_delta_t: *original_delta_t
+  eval_t_max: .4
+  test_t_max: .4
+
+ml:
+  n_epoch: 2
+  lr: 1.e-3
+  dict_loss_weight:
+    phi: 1.
+  dict_loss_function_name:
+    phi: mse
+
+  n_continue: 1
+  stop_trigger_epoch: 10
+  update_period: 1
+  seed: 0
+  show_weights: false
+  show_grads: false
+
+model:
+  mode: convection_diffusion
+  n_forward: 1
+  n_bundle: 1
+  nodes:
+    - 64
+    - 64
+    - 64
+  activations:
+    - tanh
+    - tanh
+  center_data: false
+  normalize: true
+  encoded_pushforward: true
+  use_mlp: false
+  show_scale: false
+  diff: false
+  positive_encoder: false
+  positive: false
+  encoder_weight_filter: identity
+
+  deep_processor: false
+  n_repeat_deep_processor: 1
+
+  trainable_bundle: false
+  time_average: false
+  time_average_depth: 0
+
+solver:
+  print_period: 0
+  write_mesh_period: 1
+  store_results_period: 0
+  upwind: true
+  time_evolution_method: explicit
+  n_time_repeat: 1
+  debug: false
+  convergence_threshold: 1.e-5
+  clone_boundary: true

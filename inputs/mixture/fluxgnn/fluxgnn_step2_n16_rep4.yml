@@ -1,0 +1,147 @@
+task:
+  dataset: cavity_mixture
+  validate_physics: false
+  predict_and_write: true
+
+experiment:
+  write_initial: true
+  scale_answer: true
+  power_scale_answer: .5
+  diffusion_alpha: 1.e-6
+
+data:
+  dataset_file_prefix: mixture
+  output_directory_base: results/mixture/fluxgnn
+  train:
+    - data/mixture/raw/train/h0.20_w0.20_rho990_0
+    - data/mixture/raw/train/h0.20_w0.20_rho990_1
+    - data/mixture/raw/train/h0.20_w0.20_rho990_2
+    - data/mixture/raw/train/h0.20_w0.20_rho990_3
+    - data/mixture/raw/train/h0.20_w0.60_rho990_0
+    - data/mixture/raw/train/h0.20_w0.60_rho990_1
+    - data/mixture/raw/train/h0.20_w0.60_rho990_2
+    - data/mixture/raw/train/h0.20_w0.60_rho990_3
+    - data/mixture/raw/train/h0.40_w0.20_rho990_0
+    - data/mixture/raw/train/h0.40_w0.20_rho990_1
+    - data/mixture/raw/train/h0.40_w0.20_rho990_2
+    - data/mixture/raw/train/h0.40_w0.20_rho990_3
+    - data/mixture/raw/train/h0.60_w0.40_rho990_0
+    - data/mixture/raw/train/h0.60_w0.40_rho990_1
+    - data/mixture/raw/train/h0.60_w0.40_rho990_2
+    - data/mixture/raw/train/h0.60_w0.40_rho990_3
+    - data/mixture/raw/train/h0.60_w0.60_rho990_0
+    - data/mixture/raw/train/h0.60_w0.60_rho990_1
+    - data/mixture/raw/train/h0.60_w0.60_rho990_2
+    - data/mixture/raw/train/h0.60_w0.60_rho990_3
+
+  validation:
+    - data/mixture/raw/validation/h0.40_w0.40_rho990_0
+    - data/mixture/raw/validation/h0.40_w0.40_rho990_1
+    - data/mixture/raw/validation/h0.40_w0.40_rho990_2
+    - data/mixture/raw/validation/h0.40_w0.40_rho990_3
+    - data/mixture/raw/validation/h0.60_w0.20_rho990_0
+    - data/mixture/raw/validation/h0.60_w0.20_rho990_1
+    - data/mixture/raw/validation/h0.60_w0.20_rho990_2
+    - data/mixture/raw/validation/h0.60_w0.20_rho990_3
+
+  test:
+    - data/mixture/raw/test/h0.20_w0.40_rho990_0
+    - data/mixture/raw/test/h0.20_w0.40_rho990_1
+    - data/mixture/raw/test/h0.20_w0.40_rho990_2
+    - data/mixture/raw/test/h0.20_w0.40_rho990_3
+    - data/mixture/raw/test/h0.40_w0.60_rho990_0
+    - data/mixture/raw/test/h0.40_w0.60_rho990_1
+    - data/mixture/raw/test/h0.40_w0.60_rho990_2
+    - data/mixture/raw/test/h0.40_w0.60_rho990_3
+
+simulation:
+  t_max: 1.6
+  delta_t: .2
+
+  eval_t_max: 3.2
+  test_t_max: 3.2
+  shift_t: 1.6
+
+  start_t: 16.
+  max_timeseries_t: 16.
+  original_delta_t: 0.1
+
+ml:
+  n_epoch: 1000
+  lr: 1.e-3
+  dict_loss_weight:
+    u: 1.
+    p: 1.
+    alpha: 1.
+  dict_loss_function_name:
+    u: rmse
+    p: rmse
+    alpha: rmse
+
+  n_continue: 10
+  stop_trigger_epoch: 10
+  update_period: 1
+  seed: 0
+  show_weights: false
+  show_grads: false
+
+model:
+  mode: mixture
+  n_forward: 1
+  n_bundle: 4
+  nodes:
+    - 16
+    - 16
+    - 16
+  activations:
+    - tanh
+    - tanh
+  center_data: false
+  normalize: true
+  encoded_pushforward: true
+  use_mlp: false
+  show_scale: false
+  diff: false
+  positive_encoder: false
+  positive: false
+  encoder_weight_filter: identity
+
+  deep_processor: true
+  n_repeat_deep_processor: 4
+
+  tb_base: 0.5
+  trainable_bundle: true
+  time_average: true
+  time_average_depth: 2
+
+  train_grad_rho_mlp: true
+
+  trainable_u_interpolation: true
+  trainable_u_interpolation_for_alpha: false
+  shared_u_interpolation_for_alpha: true
+  trainable_alpha_interpolation: true
+
+solver:
+  print_period: 0
+  write_mesh_period: 1
+  store_results_period: 0
+  upwind: true
+  n_iter_p_factor: .1
+  print_period: 0
+  print_period_p: 0
+  time_evolution_method: bb
+  n_time_repeat: -1  # Set by n_repeat_deep_processor
+  n_alpha_repeat: 1
+  # n_time_factor: .1
+  # time_evolution_method: explicit
+  # n_time_repeat: 10
+  debug: false
+  convergence_threshold: 1.e-5
+  skip_names:
+    - cell_p
+  clone_boundary: true
+  rhie_chow: false
+
+  n_source_smoothing: 0
+
+  diffusion_divide_by_rho: false

@@ -1,0 +1,65 @@
+task:
+  dataset: cavity_mixture
+  validate_physics: false
+  predict_and_write: true
+
+experiment:
+  write_initial: true
+  scale_answer: true
+  power_scale_answer: .5
+  diffusion_alpha: 1.e-6
+
+data:
+  dataset_file_prefix: mixture
+  output_directory_base: results/mixture/fv
+  train: []
+  validation: []
+  test:
+    - data/mixture/raw/test/h0.20_w0.40_rho990_0
+    - data/mixture/raw/test/h0.20_w0.40_rho990_1
+    - data/mixture/raw/test/h0.20_w0.40_rho990_2
+    - data/mixture/raw/test/h0.20_w0.40_rho990_3
+    - data/mixture/raw/test/h0.40_w0.60_rho990_0
+    - data/mixture/raw/test/h0.40_w0.60_rho990_1
+    - data/mixture/raw/test/h0.40_w0.60_rho990_2
+    - data/mixture/raw/test/h0.40_w0.60_rho990_3
+
+simulation:
+  t_max: 3.2
+  delta_t: .2
+
+  eval_t_max: 3.2
+  test_t_max: 3.2
+
+  start_t: 16.
+  max_timeseries_t: 16.
+  original_delta_t: 0.1
+
+ml: {}
+
+model:
+  mode: mixture
+
+solver:
+  print_period: 1
+  write_mesh_period: 1
+  store_results_period: 0
+  upwind: true
+  n_iter_p_factor: 1
+  print_period_p: 0
+  time_evolution_method: bb
+  n_time_repeat: 64
+  n_alpha_repeat: 4
+  # n_time_factor: .1
+  # time_evolution_method: explicit
+  # n_time_repeat: 10
+  debug: false
+  convergence_threshold: 1.e-5
+  skip_names:
+    - cell_p
+  clone_boundary: true
+  rhie_chow: false
+
+  n_source_smoothing: 0
+
+  diffusion_divide_by_rho: false

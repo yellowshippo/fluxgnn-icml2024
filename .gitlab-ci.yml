@@ -1,0 +1,64 @@
+image: registry.ritc.jp/ricos/machine_learning/ricos_fluid:0.3.0
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+default:
+  before_script:
+    - make libs
+
+stages:
+  - test
+
+autopep8:
+  stage: test
+  script:
+    - python3.9 -m pip install autopep8
+    - python3.9 -m autopep8 --diff --exit-code $(find fluxgnn -name "*.py")
+  allow_failure: true
+
+mixture_fluxgnn_eval_ref:
+  stage: test
+  script:
+    - make mixture_fluxgnn_eval_ref | tee log
+    - set -x
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'u:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 4)" = "1.20" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'p:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 4)" = "1.14" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'alpha:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 3)" = "3.4" ]; then echo ok; else echo nok && exit 1; fi
+
+mixture_fluxgnn_eval_rotation:
+  stage: test
+  script:
+    - make mixture_fluxgnn_eval_rotation | tee log
+    - set -x
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'u:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 4)" = "1.20" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'p:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 4)" = "1.17" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'alpha:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 3)" = "3.5" ]; then echo ok; else echo nok && exit 1; fi
+
+mixture_fluxgnn_eval_scaling:
+  stage: test
+  script:
+    - make mixture_fluxgnn_eval_scaling | tee log
+    - set -x
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'u:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 4)" = "1.21" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'p:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 4)" = "1.22" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'alpha:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 3)" = "3.5" ]; then echo ok; else echo nok && exit 1; fi
+
+mixture_fluxgnn_eval_taller:
+  stage: test
+  script:
+    - make mixture_fluxgnn_eval_taller | tee log
+    - set -x
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'u:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 4)" = "1.18" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'p:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 3)" = "9.6" ]; then echo ok; else echo nok && exit 1; fi
+    - if [ "$(cat log | grep -A3 'Total scaled MSE' | grep 'alpha:' | sed -E 's/\s\s+//g' | cut -d ' ' -f2 | head -c 3)" = "3.3" ]; then echo ok; else echo nok && exit 1; fi
+
+test_cd_fluxgnn_train:
+  stage: test
+  script:
+    - make test_cd_fluxgnn_train
+
+test_mixture_fluxgnn_train:
+  stage: test
+  script:
+    - make test_mixture_fluxgnn_train
