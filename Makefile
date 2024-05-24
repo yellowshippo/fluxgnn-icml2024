@@ -53,8 +53,8 @@ MIXTURE_MPPDE_PRETRAINED_MODEL ?= data/pretrained/mixture/mppde_f128_n4_tw4
 ################
 
 install: libs
-	-$(PYTHON) -m pip uninstall -y mp-pde-solvers
-	make -C mp-neural-pde-solvers install
+	-$(PYTHON) -m pip uninstall -y MP-Neural-PDE-Solvers
+	make -C MP-Neural-PDE-Solvers install
 
 libs: poetry
 	-$(PYTHON) -m pip uninstall -y pysiml
@@ -216,7 +216,7 @@ mixture_penn_eval_taller:
 
 ## MP-PDE (Brandstetter+ ICLR 2022)
 mixture_mppde_train:
-	make -C mp-neural-pde-solvers train_tw$(strip $(MPPDE_TW)) \
+	make -C MP-Neural-PDE-Solvers train_tw$(strip $(MPPDE_TW)) \
 		NEIGHBORS=$(strip $(MPPDE_NEIGHBORS)) \
 		HIDDEN_FEATURES=$(strip $(MPPDE_HIDDEN_FEATURES))
 
@@ -227,7 +227,7 @@ mixture_mppde_eval: \
 	mixture_mppde_eval_taller
 
 mixture_mppde_eval_ref:
-	OMP_NUM_THREADS=1 make -C mp-neural-pde-solvers eval_tw$(strip $(MPPDE_TW)) \
+	OMP_NUM_THREADS=1 make -C MP-Neural-PDE-Solvers eval_tw$(strip $(MPPDE_TW)) \
 		SAVE_DIRECTORY=../results/mixture/mppde/$(notdir $(MIXTURE_MPPDE_PRETRAINED_MODEL)) \
 		MODEL_PATH=../$(MIXTURE_MPPDE_PRETRAINED_MODEL)/model.pt \
 		NEIGHBORS=$(strip $(MPPDE_NEIGHBORS)) \
@@ -239,7 +239,7 @@ mixture_mppde_eval_ref:
 		-f true
 
 mixture_mppde_eval_rotation:
-	OMP_NUM_THREADS=1 make -C mp-neural-pde-solvers eval_tw$(MPPDE_TW) \
+	OMP_NUM_THREADS=1 make -C MP-Neural-PDE-Solvers eval_tw$(MPPDE_TW) \
 		SAVE_DIRECTORY=../results/mixture/mppde/rotation/$(notdir $(MIXTURE_MPPDE_PRETRAINED_MODEL)) \
 		MODEL_PATH=../$(MIXTURE_MPPDE_PRETRAINED_MODEL)/model.pt \
 		NEIGHBORS=$(strip $(MPPDE_NEIGHBORS)) \
@@ -252,7 +252,7 @@ mixture_mppde_eval_rotation:
 		-f true
 
 mixture_mppde_eval_scaling:
-	OMP_NUM_THREADS=1 make -C mp-neural-pde-solvers eval_tw$(MPPDE_TW) \
+	OMP_NUM_THREADS=1 make -C MP-Neural-PDE-Solvers eval_tw$(MPPDE_TW) \
 		SAVE_DIRECTORY=../results/mixture/mppde/scaling/$(notdir $(MIXTURE_MPPDE_PRETRAINED_MODEL)) \
 		MODEL_PATH=../$(MIXTURE_MPPDE_PRETRAINED_MODEL)/model.pt \
 		NEIGHBORS=$(strip $(MPPDE_NEIGHBORS)) \
@@ -265,7 +265,7 @@ mixture_mppde_eval_scaling:
 		-f true
 
 mixture_mppde_eval_taller:
-	OMP_NUM_THREADS=1 make -C mp-neural-pde-solvers eval_tw$(MPPDE_TW) \
+	OMP_NUM_THREADS=1 make -C MP-Neural-PDE-Solvers eval_tw$(MPPDE_TW) \
 		SAVE_DIRECTORY=../results/mixture/mppde/taller/$(notdir $(MIXTURE_MPPDE_PRETRAINED_MODEL)) \
 		MODEL_PATH=../$(MIXTURE_MPPDE_PRETRAINED_MODEL)/model.pt \
 		NEIGHBORS=$(strip $(MPPDE_NEIGHBORS)) \

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fluxgnn_icml2024"
+name = "fluxgnn"
 version = "0.0.8"
 description = ""
 authors = []
@@ -8,7 +8,7 @@ authors = []
 python = ">=3.9,<3.10"
 
 numpy = "<1.24.0"
-femio = {version = ">=0.3.3", allow-prereleases = true}
+femio = {version = ">=0.3.2", allow-prereleases = true}
 pysiml = {path = "lib/siml/dist/pysiml-0.2.9-py3-none-any.whl"}
 PyQt5 = {version = "^5.14.0", optional = true}
 mysqlclient = {version = "^1.4.2", optional = true}
