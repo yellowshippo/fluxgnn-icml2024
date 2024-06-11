@@ -1,6 +1,6 @@
 # Graph Neural PDE Solvers with Conservation and Similarity-Equivariance
 
-This repository is the official implementation of a ICML 2024 paper: "[Graph Neural PDE Solvers with Conservation and Similarity-Equivariance](https://openreview.net/forum?id=WajJf47TUi)."
+This repository is the official implementation of an ICML 2024 paper: "[Graph Neural PDE Solvers with Conservation and Similarity-Equivariance](https://openreview.net/forum?id=WajJf47TUi)."
 ![](figs/fluxgnn_overview.svg)
 
 ## Reference
