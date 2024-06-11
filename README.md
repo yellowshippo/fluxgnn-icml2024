@@ -8,7 +8,7 @@ This repository is the official implementation of an ICML 2024 paper: "[Graph Ne
 @inproceedings{
 horie2024graph,
 title={Graph Neural {PDE} Solvers with Conservation and Similarity-Equivariance},
-author={Masanobu Horie and NAOTO MITSUME},
+author={Masanobu Horie and Naoto Mitsume},
 booktitle={Forty-first International Conference on Machine Learning},
 year={2024},
 url={https://openreview.net/forum?id=WajJf47TUi}
