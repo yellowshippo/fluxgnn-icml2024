@@ -1,7 +1,19 @@
 # Graph Neural PDE Solvers with Conservation and Similarity-Equivariance
 
-This repository is the official implementation of a ICML 2024 paper: "Graph Neural PDE Solvers with Conservation and Similarity-Equivariance."
+This repository is the official implementation of a ICML 2024 paper: "[Graph Neural PDE Solvers with Conservation and Similarity-Equivariance](https://openreview.net/forum?id=WajJf47TUi)."
 ![](figs/fluxgnn_overview.svg)
+
+## Reference
+```
+@inproceedings{
+horie2024graph,
+title={Graph Neural {PDE} Solvers with Conservation and Similarity-Equivariance},
+author={Masanobu Horie and NAOTO MITSUME},
+booktitle={Forty-first International Conference on Machine Learning},
+year={2024},
+url={https://openreview.net/forum?id=WajJf47TUi}
+}
+```
 
 ## Install
 NOTE: This project requires Python3.9 and CUDA 11.1.
