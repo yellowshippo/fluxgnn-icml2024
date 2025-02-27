@@ -9,6 +9,8 @@ python = ">=3.9,<3.10"
 
 numpy = "<1.24.0"
 femio = {version = ">=0.3.2", allow-prereleases = true}
+mayavi = "==4.8.2"
+vtk = "==9.3.1"
 pysiml = {path = "lib/siml/dist/pysiml-0.2.9-py3-none-any.whl"}
 PyQt5 = {version = "^5.14.0", optional = true}
 mysqlclient = {version = "^1.4.2", optional = true}

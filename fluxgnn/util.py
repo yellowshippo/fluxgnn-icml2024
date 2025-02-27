@@ -114,3 +114,45 @@ def stack_tail(tensors):
 
 def list_mean(tensors):
     return torch.mean(torch.stack(tensors, dim=0), dim=0)
+
+
+def generate_facet_2d_closed_mixture_boundary_tensors(
+        torch_fv_data, dtype=torch.float32, rotation_matrix=None):
+    if rotation_matrix is None:
+        rotation_matrix = np.eye(3)
+    # Inverse rotation to go back to the original coordinate
+    facet_pos = np.einsum(
+        'pq,fq->fp', rotation_matrix.T, torch_fv_data.facet_pos)
+
+    facet_pos = torch_fv_data.facet_pos
+    facet_y = facet_pos[:, 1]
+    facet_filter_min_y = np.abs(facet_y - np.min(facet_y)) < 1e-5
+    facet_z = facet_pos[:, 2]
+    facet_filter_min_z = np.abs(facet_z - np.min(facet_z)) < 1e-5
+    facet_filter_max_z = np.abs(facet_z - np.max(facet_z)) < 1e-5
+
+    facet_filter_boundary = torch_fv_data.facet_filter_boundary
+    facet_dirichlet_u = np.ones((len(facet_pos), 3)) * np.nan
+    facet_dirichlet_u[facet_filter_boundary] = 0.
+    facet_dirichlet_u[facet_filter_min_z] = np.nan
+    facet_dirichlet_u[facet_filter_max_z] = np.nan
+
+    facet_neumann_u = np.ones((len(facet_pos), 3, 3)) * np.nan
+    facet_neumann_u[facet_filter_min_z] = 0.
+    facet_neumann_u[facet_filter_max_z] = 0.
+
+    facet_dirichlet_p = np.ones((len(facet_pos), 1)) * np.nan
+    facet_dirichlet_p[facet_filter_min_y] = 0.
+
+    facet_neumann_p = np.zeros((len(facet_pos), 3))
+    facet_neumann_p[facet_filter_min_y] = np.nan
+
+    facet_dirichlet_alpha = np.ones((len(facet_pos), 1)) * np.nan
+    facet_neumann_alpha = np.zeros((len(facet_pos), 3))
+
+    return torch_tensor(facet_dirichlet_u, dtype=dtype), \
+        torch_tensor(facet_neumann_u, dtype=dtype), \
+        torch_tensor(facet_dirichlet_p, dtype=dtype), \
+        torch_tensor(facet_neumann_p, dtype=dtype), \
+        torch_tensor(facet_dirichlet_alpha, dtype=dtype), \
+        torch_tensor(facet_neumann_alpha, dtype=dtype)
